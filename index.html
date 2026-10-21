@@ -267,6 +267,22 @@
   );
 
   console.log("Koneksi Supabase siap!");
+  
+async function tesDatabase() {
+  const { data, error } = await supabaseClient
+    .from("couple_progress")
+    .select("id")
+    .limit(1);
+
+  if (error) {
+    console.error("Tes database gagal:", error.message);
+  } else {
+    console.log("Tes database berhasil!", data);
+  }
+}
+
+tesDatabase();
+
 </script>
 </body>
 </html>
