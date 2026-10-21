@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Couple Quest 💗</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      color: #593d4b;
+      background: linear-gradient(135deg, #fff0f5, #fce1eb, #fff7ed);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 24px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid white;
+      border-radius: 28px;
+      box-shadow: 0 15px 50px #c77c9630;
+    }
+
+    .heart {
+      font-size: 58px;
+      margin-bottom: 12px;
+      animation: beat 1.4s infinite;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin: 8px 0;
+      color: #d65d85;
+    }
+
+    .subtitle {
+      line-height: 1.7;
+      color: #876b79;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #ffe4ee;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      margin: 14px 0;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #e66e96;
+      color: white;
+    }
+
+    button:hover { background: #d65d85; }
+
+    .secondary {
+      background: #fff0f5;
+      color: #c45178;
+    }
+
+    #game {
+      display: none;
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .question {
+      font-size: 19px;
+      line-height: 1.6;
+      font-weight: bold;
+    }
+
+    .answer {
+      background: #fff0f5;
+      color: #87536a;
+      text-align: left;
+      border: 1px solid #f8d4e1;
+    }
+
+    #feedback {
+      text-align: center;
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+
+    @keyframes beat {
+      50% { transform: scale(1.12); }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="heart">💗</div>
+    <div class="tag">A LITTLE GAME FOR TWO</div>
+    <h1>Couple Quest</h1>
+    <p class="subtitle">
+      Every love story has its own little adventures.<br>
+      Ready to play, Vivi?
+    </p>
+
+    <button onclick="startGame()">Start Our Quest ✨</button>
+    <button class="secondary" onclick="showMessage()">
+      A Little Message 💌
+    </button>
+
+    <div id="game">
+      <p class="tag" id="progress">QUEST 1</p>
+      <p class="question" id="question"></p>
+      <div id="answers"></div>
+      <p id="feedback"></p>
+      <button id="next" onclick="nextQuestion()" style="display:none">
+        Next Quest ➜
+      </button>
+    </div>
+  </main>
+
+  <script>
+    const quests = [
+      {
+        q: "What was one of our earliest special moments?",
+        a: [
+          "Our first late-night call",
+          "Playing football together",
+          "Cooking dinner together"
+        ],
+        correct: 0,
+        note: "That midnight-to-5-AM call hits different, huh? 💗"
+      },
+      {
+        q: "What's our favorite kind of virtual date?",
+        a: [
+          "Watching movies together",
+          "Doing homework together",
+          "Shopping for groceries"
+        ],
+        correct: 0,
+        note: "Movie nights together are little memories worth keeping. 🍿"
+      },
+      {
+        q: "What's the most important thing in our quest?",
+        a: [
+          "Getting every answer right",
+          "Understanding and choosing each other",
+          "Winning the most points"
+        ],
+        correct: 1,
+        note: "It's always about us, not about winning. ❤️"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let answered = false;
+
+    function startGame() {
+      current = 0;
+      score = 0;
+      document.getElementById("game").style.display = "block";
+      document.getElementById("feedback").textContent = "";
+      renderQuestion();
+      document.getElementById("game").scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const quest = quests[current];
+      document.getElementById("progress").textContent =
+        `QUEST ${current + 1} OF ${quests.length}`;
+      document.getElementById("question").textContent = quest.q;
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("next").style.display = "none";
+
+      const answers = document.getElementById("answers");
+      answers.innerHTML = "";
+
+      quest.a.forEach((answer, index) => {
+        const button = document.createElement("button");
+        button.className = "answer";
+        button.textContent = answer;
+        button.onclick = () => chooseAnswer(index);
+        answers.appendChild(button);
+      });
+    }
+
+    function chooseAnswer(index) {
+      if (answered) return;
+      answered = true;
+
+      const quest = quests[current];
+      if (index === quest.correct) score++;
+
+      document.getElementById("feedback").textContent =
+        quest.note;
+
+      document.querySelectorAll(".answer").forEach(button => {
+        button.disabled = true;
+        button.style.opacity = "0.7";
+      });
+
+      const next = document.getElementById("next");
+      next.textContent = current === quests.length - 1
+        ? "See Our Result 💕"
+        : "Next Quest ➜";
+      next.style.display = "block";
+    }
+
+    function nextQuestion() {
+      current++;
+
+      if (current >= quests.length) {
+        document.getElementById("progress").textContent =
+          "QUEST COMPLETE ✨";
+        document.getElementById("question").textContent =
+          "You completed our little adventure!";
+        document.getElementById("answers").innerHTML = "";
+        document.getElementById("feedback").textContent =
+          `You got ${score} out of ${quests.length} answers right. ` +
+          "But the best part is making memories together. ❤️";
+        document.getElementById("next").style.display = "none";
+        return;
+      }
+
+      renderQuestion();
+    }
+
+    function showMessage() {
+      alert(
+        "Hey Vivi! 💌\n\n" +
+        "No matter how small our moments are, " +
+        "I'm glad we get to create our own little story together. ❤️"
+      );
+    }
+  </script>
+</body>
+</html>
